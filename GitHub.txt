@@ -8,5 +8,5 @@ git push -u origin main
 
 
 git add .
-git commit -m "feat: implement premium glowing green navbar and footer UI components"
+git commit -m "feat(auth): complete login and register layouts with hot-toast"
 git push

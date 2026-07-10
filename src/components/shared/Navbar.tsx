@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Leaf, User, LogOut } from "lucide-react";
+import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -14,7 +15,7 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Toggle this true/false to preview Login/Register buttons vs logged-in Avatar
-  const isLoggedIn = false; 
+  const isLoggedIn = false;
   const userAvatarUrl = null; // System fallback to initials if image doesn't exist
 
   const navLinks = [
@@ -29,7 +30,10 @@ export default function Navbar() {
   // Close profile dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
       }
     }
@@ -41,11 +45,18 @@ export default function Navbar() {
     <nav className="bg-aqBase border-b border-aqGlow/60 sticky top-0 z-50 backdrop-blur-md bg-opacity-95 shadow-navGlow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Leaf className="h-6 w-6 text-aqButton" />
-            <span className="font-bold text-xl tracking-tight text-white">
+            <div className="relative h-10 w-10 rounded-full overflow-hidden border border-aqButton/40 shadow-btnGlow">
+              <Image
+                src="/Images/logo.png"
+                alt="Aquatic PlantoPedia Logo"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+            <span className="font-bold text-xl tracking-tight text-white transition-colors">
               Aquatic <span className="text-aqButton">PlantoPedia</span>
             </span>
           </Link>
@@ -59,7 +70,9 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   className={`px-1 text-sm font-medium transition-all relative flex flex-col items-center justify-center h-full ${
-                    isActive ? "text-aqButton font-semibold" : "text-gray-300 hover:text-aqButton"
+                    isActive
+                      ? "text-aqButton font-semibold"
+                      : "text-gray-300 hover:text-aqButton"
                   }`}
                 >
                   <span>{link.name}</span>
@@ -75,17 +88,22 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
               /* Authenticated User View (Avatar & Name) */
-              <div className="flex items-center gap-3 relative" ref={dropdownRef}>
-                <span className="text-sm font-medium text-white">Hi, Asmual</span>
-                
-                <button 
+              <div
+                className="flex items-center gap-3 relative"
+                ref={dropdownRef}
+              >
+                <span className="text-sm font-medium text-white">
+                  Hi, Asmual
+                </span>
+
+                <button
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="h-9 w-9 rounded-full bg-aqGlow flex items-center justify-center font-bold text-white border border-aqButton shadow-btnGlow overflow-hidden cursor-pointer focus:outline-none"
                 >
                   {userAvatarUrl ? (
-                    <img 
-                      src={userAvatarUrl} 
-                      alt="User Avatar" 
+                    <img
+                      src={userAvatarUrl}
+                      alt="User Avatar"
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -139,7 +157,11 @@ export default function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               className="text-white p-2 rounded-lg bg-aqGlow"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -156,23 +178,31 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
-                  isActive ? "text-aqButton bg-aqGlow/40 font-semibold" : "text-gray-300 hover:text-white hover:bg-aqGlow"
+                  isActive
+                    ? "text-aqButton bg-aqGlow/40 font-semibold"
+                    : "text-gray-300 hover:text-white hover:bg-aqGlow"
                 }`}
               >
                 {link.name}
               </Link>
             );
           })}
-          
+
           {/* Mobile Dynamic Auth Actions */}
           <div className="pt-4 border-t border-aqGlow space-y-2 px-3">
             {isLoggedIn ? (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-white text-sm font-medium">Hi, Asmual</span>
+                  <span className="text-white text-sm font-medium">
+                    Hi, Asmual
+                  </span>
                   <div className="h-9 w-9 rounded-full bg-aqGlow flex items-center justify-center font-bold text-white border border-aqButton">
                     {userAvatarUrl ? (
-                      <img src={userAvatarUrl} alt="Avatar" className="h-full w-full object-cover" />
+                      <img
+                        src={userAvatarUrl}
+                        alt="Avatar"
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <span>A</span>
                     )}

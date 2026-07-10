@@ -1,7 +1,8 @@
 "use strict";
 
 import Link from "next/link";
-import { Leaf, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,15 +11,22 @@ export default function Footer() {
     <footer className="bg-aqBase border-t border-aqGlow text-gray-400 shadow-cardGlow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
           {/* Brand Column */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Leaf className="h-5 w-5 text-aqButton" />
-              <span className="font-bold text-lg tracking-tight text-white">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="relative h-10 w-10 rounded-full overflow-hidden border border-aqButton/40 shadow-btnGlow ">
+                <Image
+                  src="/Images/logo.png"
+                  alt="Aquatic PlantoPedia Logo"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <span className="font-bold text-xl tracking-tight text-white transition-colors">
                 Aquatic <span className="text-aqButton">PlantoPedia</span>
               </span>
-            </div>
+            </Link>
             <p className="text-sm leading-relaxed text-gray-300">
               Exotic aquatic ecosystems, lush floating plants, and premium
               boutique aquascaping artifacts.
@@ -32,17 +40,26 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/plants" className="hover:text-aqButton transition-colors">
+                <Link
+                  href="/plants"
+                  className="hover:text-aqButton transition-colors"
+                >
                   Aquatic Plants
                 </Link>
               </li>
               <li>
-                <Link href="/fish" className="hover:text-aqButton transition-colors">
+                <Link
+                  href="/fish"
+                  className="hover:text-aqButton transition-colors"
+                >
                   Exotic Fish
                 </Link>
               </li>
               <li>
-                <Link href="/bonsai" className="hover:text-aqButton transition-colors">
+                <Link
+                  href="/bonsai"
+                  className="hover:text-aqButton transition-colors"
+                >
                   Premium Bonsai
                 </Link>
               </li>
@@ -56,17 +73,26 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="hover:text-aqButton transition-colors">
+                <Link
+                  href="/about"
+                  className="hover:text-aqButton transition-colors"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-aqButton transition-colors">
+                <Link
+                  href="/contact"
+                  className="hover:text-aqButton transition-colors"
+                >
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-aqButton transition-colors">
+                <Link
+                  href="/faq"
+                  className="hover:text-aqButton transition-colors"
+                >
                   FAQs
                 </Link>
               </li>
@@ -107,7 +133,12 @@ export default function Footer() {
                 aria-label="Instagram"
                 className="hover:text-white hover:border-aqButton transition-all bg-aqGlow/40 p-2.5 rounded-xl border border-aqGlow shadow-sm text-aqButton hover:shadow-btnGlow"
               >
-                <svg className="h-4 w-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  className="h-4 w-4 fill-none stroke-current stroke-2"
+                  viewBox="0 0 24 24"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -130,8 +161,12 @@ export default function Footer() {
         <div className="border-t border-aqGlow mt-12 pt-6 text-xs flex flex-col sm:flex-row justify-between gap-4 text-gray-400">
           <p>&copy; {currentYear} Aquatic PlantoPedia. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:underline hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:underline hover:text-white">Terms of Service</a>
+            <a href="#" className="hover:underline hover:text-white">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:underline hover:text-white">
+              Terms of Service
+            </a>
           </div>
         </div>
       </div>

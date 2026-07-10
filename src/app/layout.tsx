@@ -20,7 +20,16 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-aquaticBg text-white min-h-screen flex flex-col`}>
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster 
+          position="top-right" 
+          reverseOrder={false} 
+          toastOptions={{
+            style: {
+              marginTop: "75px",
+              marginRight: "10px",
+            }
+          }}
+        />
         
         <Navbar />
         <main className="grow">{children}</main>
