@@ -3,14 +3,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { User, Mail, Lock, Eye, EyeOff, UserPlus, Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
 
+  // Validates standard criteria constraints mapping complexity parameters
   const validatePassword = (pass: string) => {
     const hasMinLength = pass.length >= 8;
     const hasUppercase = /[A-Z]/.test(pass);
@@ -21,9 +27,11 @@ export default function RegisterPage() {
     return hasMinLength && hasUppercase && hasLowercase && hasNumber && hasSymbol;
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  // Process core backend ingestion verification systems
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Structural confirmation validation checks across entries
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       toast.error("Please complete all fields properly.", {
         duration: 3000,
@@ -36,6 +44,7 @@ export default function RegisterPage() {
       return;
     }
 
+    // RegEx string integrity authentication evaluation parsing
     if (!validatePassword(formData.password)) {
       toast.error("Password needs 8+ chars with upper, lower, number, and symbol.", {
         duration: 3000,
@@ -48,6 +57,7 @@ export default function RegisterPage() {
       return;
     }
 
+    // Comparative parameter synchronization check
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match.", {
         duration: 3000,
@@ -60,75 +70,123 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success("Account created successfully! Welcome!", {
-      duration: 3000,
-      style: {
-        background: "#032C1C",
-        color: "#fff",
-        border: "1px solid #25AC4C",
-      },
-    });
+    try {
+      setIsLoading(true);
+
+      // Pipe elements across to MongoDB via BetterAuth instance connection mapping
+      await authClient.signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        callbackURL: "/",
+      }, {
+        onRequest: () => setIsLoading(true),
+        onSuccess: () => {
+          setIsLoading(false);
+          toast.success("Account created successfully! Welcome!", {
+            duration: 3000,
+            style: {
+              background: "#032C1C",
+              color: "#fff",
+              border: "1px solid #25AC4C",
+            },
+          });
+          router.push("/");
+          router.refresh();
+        },
+        onError: (ctx) => {
+          setIsLoading(false);
+          toast.error(ctx.error.message || "Registration failed. Account might already exist.", {
+            duration: 4000,
+            style: {
+              background: "#032C1C",
+              color: "#fff",
+              border: "1px solid #ef4444",
+            },
+          });
+        }
+      });
+    } catch (err) {
+      setIsLoading(false);
+      toast.error("A technical error occurred during registration.");
+    }
+  };
+
+  // Handle Google identity registration provider invocation routing setup
+  const handleGoogleRegister = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch (err) {
+      toast.error("Google registration failed to initialize.");
+    }
   };
 
   return (
     <div className="min-h-screen bg-aqBase flex items-center justify-center px-4 py-12 relative overflow-hidden">
       
-      {/* Main Glassmorphism Card */}
+      {/* Main Glassmorphism Display Card Canvas container setup */}
       <div className="w-full max-w-md bg-aqBase border border-aqGlow/60 rounded-2xl p-8 shadow-cardGlow backdrop-blur-md relative z-10">
         
-        {/* Header */}
+        {/* Core Description Headings Label Segment */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-extrabold text-white tracking-tight">Create Account</h2>
           <p className="text-gray-400 text-sm mt-2">Join PlantoPedia and customize your profile</p>
         </div>
 
-        {/* Form */}
+        {/* Data Submission Entry Form Configuration layout wrapper */}
         <form onSubmit={handleRegister} className="space-y-4">
           
-          {/* Full Name Input */}
+          {/* User Full Name Input Configuration Text Frame */}
           <div className="space-y-1.5 relative group">
             <label className="text-xs font-semibold text-gray-300 tracking-wide uppercase">Full Name</label>
             <div className="relative">
               <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#25AC4C] transition-colors" />
               <input
                 type="text"
-                placeholder="Asmual Hoque"
+                disabled={isLoading}
+                placeholder="Full Name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all"
+                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all disabled:opacity-50"
               />
             </div>
           </div>
 
-          {/* Email Input */}
+          {/* User Email Registration input management node system block */}
           <div className="space-y-1.5 relative group">
             <label className="text-xs font-semibold text-gray-300 tracking-wide uppercase">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#25AC4C] transition-colors" />
               <input
                 type="email"
+                disabled={isLoading}
                 placeholder="example@domain.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all"
+                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all disabled:opacity-50"
               />
             </div>
           </div>
 
-          {/* Password Input */}
+          {/* Secure AlphaNumeric Password String input data module tracking */}
           <div className="space-y-1.5 relative group">
             <label className="text-xs font-semibold text-gray-300 tracking-wide uppercase">Password</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#25AC4C] transition-colors" />
               <input
                 type={showPassword ? "text" : "password"}
+                disabled={isLoading}
                 placeholder="Min 8 chars (A, a, 1, #)"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-11 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all"
+                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-11 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all disabled:opacity-50"
               />
               <button
                 type="button"
+                disabled={isLoading}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#25AC4C] transition-colors focus:outline-none"
               >
@@ -137,20 +195,22 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Repeat Password Input */}
+          {/* Secure Double Verification String Matching input box component context */}
           <div className="space-y-1.5 relative group">
             <label className="text-xs font-semibold text-gray-300 tracking-wide uppercase">Confirm Password</label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#25AC4C] transition-colors" />
               <input
                 type={showConfirmPassword ? "text" : "password"}
+                disabled={isLoading}
                 placeholder="Repeat your password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-11 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all"
+                className="w-full bg-[#032C1C] border border-aqGlow/50 rounded-xl pl-11 pr-11 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#25AC4C] focus:ring-1 focus:ring-[#25AC4C] transition-all disabled:opacity-50"
               />
               <button
                 type="button"
+                disabled={isLoading}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#25AC4C] transition-colors focus:outline-none"
               >
@@ -159,39 +219,41 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* Main Action Controller Request Submission submission button trigger configuration */}
           <button
             type="submit"
-            className="w-full bg-[#25AC4C] hover:bg-[#25AC4C]/90 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-btnGlow flex items-center justify-center gap-2 pt-2"
+            disabled={isLoading}
+            className="w-full bg-[#25AC4C] hover:bg-[#25AC4C]/90 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-all shadow-btnGlow flex items-center justify-center gap-2 pt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <UserPlus className="h-4 w-4" />
-            Create Account
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <UserPlus className="h-4 w-4" />
+                Create Account
+              </>
+            )}
           </button>
         </form>
 
-        {/* Divider */}
+        {/* Dynamic Context visual layout formatting split border setup divider */}
         <div className="relative my-5 flex items-center justify-center">
           <hr className="w-full border-aqGlow/60" />
           <span className="absolute bg-aqBase px-3 text-xs text-gray-500 uppercase tracking-wider">Or sign up with</span>
         </div>
 
-        {/* Google Authentication Button */}
+        {/* Alternative Authentication Social Identity Google execution container entry */}
         <button
           type="button"
-          className="w-full bg-aqGlow/20 hover:bg-aqGlow/40 text-white border border-aqGlow border-b-2 font-medium py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-3"
+          disabled={isLoading}
+          onClick={handleGoogleRegister}
+          className="w-full bg-aqGlow/20 hover:bg-aqGlow/40 text-white border border-aqGlow border-b-2 font-medium py-3 px-4 rounded-xl text-sm transition-all flex items-center justify-center gap-3 disabled:opacity-50"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-            <g transform="matrix(1, 0, 0, 1, 0, 0)">
-              <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.56h3.29c1.93,-1.78 3.04,-4.4 3.04,-7.49C21.67,11.83 21.56,11.43 21.35,11.1z" fill="#4285F4" />
-              <path d="M12,20.62c2.43,0 4.47,-0.81 5.96,-2.18l-3.29,-2.56c-0.91,0.61 -2.08,0.98 -2.67,0.98 -2.34,0 -4.33,-1.58 -5.03,-3.71H3.6v2.64C5.09,18.73 8.35,20.62 12,20.62z" fill="#34A853" />
-              <path d="M6.97,13.15c-0.18,-0.54 -0.28,-1.11 -0.28,-1.7s0.1,-1.16 0.28,-1.7V7.11H3.6v2.64C5.09,18.73 8.35,20.62 12,20.62z" fill="#FBBC05" />
-              <path d="M12,6.14c1.32,0 2.51,0.45 3.44,1.35l2.58,-2.58C16.46,3.48 14.43,2.75 12,2.75c-3.65,0 -6.91,1.89 -8.4,4.36l3.37,2.64C7.67,8.03 9.66,6.14 12,6.14z" fill="#EA4335" />
-            </g>
-          </svg>
+          <FcGoogle className="h-5 w-5" />
           Sign Up with Google
         </button>
 
-        {/* Redirect Footer */}
+        {/* Dynamic Inverse Login Form Portal Route Link Entry mapping */}
         <p className="text-center text-sm text-gray-400 mt-6">
           Already have an account?{" "}
           <Link href="/login" className="text-[#25AC4C] font-semibold hover:underline">

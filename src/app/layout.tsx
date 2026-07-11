@@ -18,20 +18,22 @@ interface LayoutProps {
 
 export default function RootLayout({ children }: LayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-aquaticBg text-white min-h-screen flex flex-col`}>
+        {/* Toast View Controller Setup adjusted for 50px optimized navbar height */}
         <Toaster 
           position="top-right" 
           reverseOrder={false} 
           toastOptions={{
             style: {
-              marginTop: "75px",
+              marginTop: "65px",
               marginRight: "10px",
             }
           }}
         />
         
         <Navbar />
+        {/* Growing Core Node Context Element Container */}
         <main className="grow">{children}</main>
         <Footer />
       </body>

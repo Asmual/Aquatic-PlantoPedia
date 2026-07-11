@@ -8,5 +8,5 @@ git push -u origin main
 
 
 git add .
-git commit -m "feat(auth): complete login and register layouts with hot-toast"
+git commit -m "Add hero section, auth UI, and secure MongoDB setup"
 git push
