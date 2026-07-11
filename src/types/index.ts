@@ -2,7 +2,7 @@ export interface TPlant {
   id?: string;
   title: string;
   scientificName: string;
-  category: 'Aquatic' | 'Floating' | 'Submerged' | 'Deep Water'; 
+  category: 'Aquatic' | 'Floating' | 'Submerged' | 'Deep Water';
   shortDescription: string;
   fullDescription: string;
   price: number;
@@ -17,4 +17,10 @@ export interface TUser {
   name: string;
   email: string;
   role: 'user' | 'admin';
+}
+
+export interface TFetchResult<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
 }

@@ -6,22 +6,40 @@ export function useFetch<T>(url: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
+        setLoading(true);
+        const response = await fetch(url, { signal });
+        
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
+        
         const result = await response.json();
         setData(result);
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
+        setError(null);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          if (err.name === "AbortError") {
+            return;
+          }
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => {
+      controller.abort();
+    };
   }, [url]);
 
   return { data, loading, error };

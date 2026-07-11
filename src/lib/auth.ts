@@ -35,7 +35,6 @@ export const auth = betterAuth({
     },
   },
 
-  // Added user schema extension to allow storing phoneNumber directly in MongoDB
   user: {
     additionalFields: {
       phoneNumber: {
@@ -43,6 +42,37 @@ export const auth = betterAuth({
         required: false,
         defaultValue: "",
       },
+      // Added role configuration to dynamically default every new registration to "user"
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "user",
+      },
     },
   },
+
+  // Exposes the role attribute directly to the client-side session schema configuration
+  plugins: [
+    {
+      id: "role-session-extension",
+      transformSession: {
+        schema: {
+          user: {
+            role: {
+              type: "string",
+            },
+          },
+        },
+        fn: async (sessionContext) => {
+          return {
+            session: sessionContext.session,
+            user: {
+              ...sessionContext.user,
+              role: (sessionContext.user as { role?: string }).role || "user",
+            },
+          };
+        },
+      },
+    },
+  ],
 });
