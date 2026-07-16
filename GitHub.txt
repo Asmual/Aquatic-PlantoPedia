@@ -8,5 +8,5 @@ git push -u origin main
 
 
 git add .
-git commit -m "Add hero section, implement MongoDB &BetterAuth, Create dashboard page"
+git commit -m "env update, and reconnect db"
 git push

@@ -48,6 +48,12 @@ const Sidebar = () => {
             </p>
             <ul className="space-y-1">
               <li>
+                <Link href="/dashboard/admin" className={linkStyle('/dashboard/admin')}>
+                  <User size={18} />
+                  <span>Overview</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/dashboard/admin/admin-profile" className={linkStyle('/dashboard/admin/admin-profile')}>
                   <User size={18} />
                   <span>Admin Profile</span>

@@ -18,19 +18,22 @@ export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-aquaticBg text-white min-h-screen flex flex-col`}>
-        {/* Toast View Controller Setup adjusted for 50px optimized navbar height */}
-        <Toaster 
-          position="top-right" 
-          reverseOrder={false} 
+        {/* Toast Notification Config */}
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
           toastOptions={{
             style: {
               marginTop: "65px",
               marginRight: "10px",
+              background: "#064E34",
+              color: "#fff",
+              border: "1px solid #25AC4C"
             }
           }}
         />
-        
-        {/* Growing Core Node Context Element Container */}
+       
+        {/* Main Content Area */}
         <main className="grow">{children}</main>
       </body>
     </html>

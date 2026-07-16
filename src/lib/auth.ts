@@ -1,78 +1,28 @@
 "use strict";
-
 import { betterAuth } from "better-auth";
-import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import dns from "node:dns";
 
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-const uri = process.env.MONGODB_URI;
-if (!uri) {
-  throw new Error("Please add your MONGODB_URI to .env.local");
-}
-
-const client = new MongoClient(uri);
+const client = new MongoClient(process.env.MONGODB_URI);
 await client.connect();
 
-const db = client.db("Aquatic_PlantoPedia");
-
 export const auth = betterAuth({
-  database: mongodbAdapter(db),
- 
+  database: mongodbAdapter(client.db("Aquatic-PlantoPedia")),
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-
+  
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+  
   emailAndPassword: {
     enabled: true,
-    minPasswordLength: 8,
   },
 
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
   },
-
-  user: {
-    additionalFields: {
-      phoneNumber: {
-        type: "string",
-        required: false,
-        defaultValue: "",
-      },
-      // Added role configuration to dynamically default every new registration to "user"
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "user",
-      },
-    },
-  },
-
-  // Exposes the role attribute directly to the client-side session schema configuration
-  plugins: [
-    {
-      id: "role-session-extension",
-      transformSession: {
-        schema: {
-          user: {
-            role: {
-              type: "string",
-            },
-          },
-        },
-        fn: async (sessionContext) => {
-          return {
-            session: sessionContext.session,
-            user: {
-              ...sessionContext.user,
-              role: (sessionContext.user as { role?: string }).role || "user",
-            },
-          };
-        },
-      },
-    },
-  ],
 });

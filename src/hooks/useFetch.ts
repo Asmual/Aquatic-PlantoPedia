@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { TFetchResult } from "@/types";
 
-export function useFetch<T>(url: string) {
+export function useFetch<T>(url: string): TFetchResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,11 +14,11 @@ export function useFetch<T>(url: string) {
       try {
         setLoading(true);
         const response = await fetch(url, { signal });
-        
+       
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
-        
+       
         const result = await response.json();
         setData(result);
         setError(null);

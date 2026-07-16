@@ -1,21 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 "use strict";
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-// Fixed the incorrect import path from "next/next/link" to "next/link"
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  Menu, 
-  X, 
-  User, 
-  LogOut, 
-  LayoutDashboard, 
-  ShoppingBag, 
-  BarChart3, 
-  Layers, 
-  CreditCard 
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  LayoutDashboard,
+  ShoppingBag,
+  BarChart3,
+  Layers,
+  CreditCard
 } from "lucide-react";
 import Image from "next/image";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -31,7 +31,7 @@ export default function Navbar() {
   const isLoggedIn = !!session;
   const userAvatarUrl = session?.user?.image || null;
   const userName = session?.user?.name || "User";
-  
+ 
   const userRole = (session?.user as any)?.role?.toLowerCase() || "user";
   const isAdmin = userRole === "admin";
 
@@ -57,20 +57,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (isPending) {
-    return (
-      <nav className="fixed top-0 left-0 w-full z-50 bg-aqBase/40 border-b border-aqGlow/20 backdrop-blur-md h-14 flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-full bg-aqGlow/20 animate-pulse" />
-            <div className="h-4 w-24 bg-aqGlow/20 animate-pulse rounded" />
-          </div>
-          <div className="h-7 w-20 bg-aqGlow/20 animate-pulse rounded-lg" />
-        </div>
-      </nav>
-    );
-  }
-
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-aqBase/40 border-b border-aqGlow/20 backdrop-blur-md shadow-navGlow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,7 +68,8 @@ export default function Navbar() {
               <Image
                 src="/Images/logo.png"
                 alt="Aquatic PlantoPedia Logo"
-                fill
+                width="28"
+                height="28"             
                 className="object-cover"
                 priority
               />
@@ -115,7 +102,13 @@ export default function Navbar() {
 
           {/* Desktop Authentication View */}
           <div className="hidden md:flex items-center gap-3">
-            {isLoggedIn ? (
+            {isPending ? (
+              /* Local Skeleton Loader while session is loading */
+              <div className="flex items-center gap-3">
+                <div className="h-4 w-16 bg-aqGlow/40 animate-pulse rounded" />
+                <div className="h-7 w-7 rounded-full bg-aqGlow/40 animate-pulse border border-aqGlow/20" />
+              </div>
+            ) : isLoggedIn ? (
               <div className="flex items-center gap-3 relative" ref={dropdownRef}>
                 <span className="text-xs font-medium text-white">Hi, {userName}</span>
                 <button
@@ -131,11 +124,11 @@ export default function Navbar() {
 
                 {showDropdown && (
                   <div className="absolute right-0 top-9 w-52 rounded-lg bg-aqBase border border-aqGlow shadow-cardGlow py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                    
+                   
                     {isAdmin ? (
                       <>
                         <Link
-                          href="/dashboard/admin/sales-management"
+                          href="/dashboard/admin"
                           onClick={() => setShowDropdown(false)}
                           className="flex items-center gap-2 px-3 py-2 text-xs text-gray-200 hover:text-white hover:bg-aqGlow/50 transition-colors"
                         >
@@ -186,7 +179,7 @@ export default function Navbar() {
                     ) : (
                       <>
                         <Link
-                          href="/dashboard/user/user-profile"
+                          href="/dashboard/user"
                           onClick={() => setShowDropdown(false)}
                           className="flex items-center gap-2 px-3 py-2 text-xs text-gray-200 hover:text-white hover:bg-aqGlow/50 transition-colors"
                         >
@@ -268,7 +261,13 @@ export default function Navbar() {
           })}
 
           <div className="pt-3 border-t border-aqGlow/40 space-y-1 px-3">
-            {isLoggedIn ? (
+            {isPending ? (
+              /* Local Loader Skeleton for mobile authentication section */
+              <div className="flex items-center justify-between py-2">
+                <div className="h-4 w-20 bg-aqGlow/40 animate-pulse rounded" />
+                <div className="h-7 w-7 rounded-full bg-aqGlow/40 animate-pulse" />
+              </div>
+            ) : isLoggedIn ? (
               <div className="space-y-1">
                 <div className="flex items-center justify-between py-2 border-b border-aqGlow/20 mb-2">
                   <span className="text-white text-xs font-medium">Hi, {userName}</span>
@@ -279,7 +278,7 @@ export default function Navbar() {
 
                 {isAdmin ? (
                   <>
-                    <Link href="/dashboard/admin/sales-management" onClick={() => setIsOpen(false)} className="flex items-center gap-3 py-2 text-sm text-gray-300 hover:text-white">
+                    <Link href="/dashboard/admin" onClick={() => setIsOpen(false)} className="flex items-center gap-3 py-2 text-sm text-gray-300 hover:text-white">
                       <LayoutDashboard className="h-4 w-4 text-aqButton" /> View Dashboard
                     </Link>
                     <Link href="/dashboard/admin/admin-profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 py-2 text-sm text-gray-300 hover:text-white">
@@ -300,7 +299,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Link href="/dashboard/user/user-profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 py-2 text-sm text-gray-300 hover:text-white">
+                    <Link href="/dashboard/user" onClick={() => setIsOpen(false)} className="flex items-center gap-3 py-2 text-sm text-gray-300 hover:text-white">
                       <LayoutDashboard className="h-4 w-4 text-aqButton" /> View Dashboard
                     </Link>
                     <Link href="/dashboard/user/user-profile" onClick={() => setIsOpen(false)} className="flex items-center gap-3 py-2 text-sm text-gray-300 hover:text-white">

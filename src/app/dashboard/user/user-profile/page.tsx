@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use strict";
 "use client";
 
@@ -7,7 +8,6 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-// Explicitly defining the extended User type to eliminate VS Code warnings
 interface CustomUser {
   id: string;
   email: string;
@@ -23,7 +23,6 @@ export default function ProfilePage() {
   const router = useRouter();
   const { data: session, isPending, refetch } = authClient.useSession();
 
-  // Input states initialized with clear defaults to stop "controlled to uncontrolled" type errors
   const [name, setName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -32,11 +31,9 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  // Sync state cleanly whenever the session data safely loads or mutates
   useEffect(() => {
     if (session?.user) {
       const user = session.user as CustomUser;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(user.name || "");
       setPhoneNumber(user.phoneNumber || "");
       setPreviewUrl(user.image || null);
@@ -86,7 +83,6 @@ export default function ProfilePage() {
     try {
       let finalImageUrl = session?.user?.image || null;
 
-      // 1. Process local file image upload to cloud infrastructure only when saving triggers
       if (selectedFile) {
         setIsUploading(true);
         const uploadedUrl = await uploadToImgBB(selectedFile);
@@ -100,10 +96,8 @@ export default function ProfilePage() {
         finalImageUrl = uploadedUrl;
       }
 
-      // 2. Perform direct MongoDB document updates using supported user fields
-      // FIX: phoneNumber was missing here, so it was never sent to better-auth
-      // and never persisted to MongoDB even though the schema supports it.
-      await authClient.updateUser({
+      // Fixed the API client call structure from updateUser to user.update with accurate data properties
+      await authClient.user.update({
         name: name,
         image: finalImageUrl || undefined,
         phoneNumber: phoneNumber,
@@ -111,7 +105,6 @@ export default function ProfilePage() {
 
       setSelectedFile(null);
 
-      // 3. Complete internal refetch cache sync procedures before firing toast alerts
       await refetch();
 
       toast.success("Profile updated successfully!");
@@ -154,7 +147,6 @@ export default function ProfilePage() {
               ) : (
                 <>
                   {previewUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={previewUrl} alt="User Avatar Preview" className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-3xl font-bold uppercase">{name?.charAt(0) ?? "U"}</span>
